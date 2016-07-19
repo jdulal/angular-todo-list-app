@@ -22,14 +22,14 @@
         <!--Begin Content Box-->
 
         <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12">
-            <div class="row text-center">
+            <div class="row">
                 <div class="col-lg-1 col-md-1"></div>
                  <span id="main-container">
                     <div id="add-todo-form" class="well col-lg-10 col-md-10 col-sm-12 col-xs-12" style="margin-top:3%;">
-                        <input type="text" class="form-control" name="todo-title" placeholder="Title">
+                        <input type="text" class="form-control" placeholder="Title" id="todo-title">
                         <span id="todo-fields"></span>
                         <button id="add-todo" class="form-control" style="width: 4%;border-radius: 50%;margin-bottom: -31px;float: right;margin-top: 4px;" ><i style="color: blue; margin-left: -2px;" class="glyphicon glyphicon-plus"></i></button>
-                        <button id="add-todo-add" class="form-control" style="width: 4%;border-radius: 50%;margin-bottom: -31px;float: right;margin-top: 4px; margin-right: 4px;" ><i style="color: green; margin-left: -2px;" class="glyphicon glyphicon-ok"></i></button>
+                        <button id="add-todo-add" class="form-control hidden" style="width: 4%;border-radius: 50%;margin-bottom: -31px;float: right;margin-top: 4px; margin-right: 4px;" ><i style="color: green; margin-left: -2px;" class="glyphicon glyphicon-ok"></i></button>
                     </div>
                  </span>
                 <div class="col-lg-1 col-md-1"></div>
@@ -46,20 +46,55 @@
 <script src="assets/js/bootstrap.min.js"></script>
 
 <script>
+    var checklistData = [];
+    var id =0;
     $("#add-todo").click(function(){
+        if (id!=0){
+            checklistData.push($("#text-"+(id-1)).val())
+        }
         $("#add-todo-form").animate({height: '+=42px'});
-
-        add_row = "<div style='margin-top: 8px;'><input type='text' class='form-control'></div>";
-        $("#todo-fields").append(add_row)
+        add_row = "<div style='margin-top: 8px;padding-left: 50px;'><input type='text' id='text-"+id+"' class='form-control'></div>";
+        $("#todo-fields").append(add_row);
+        id+=1;
+        $("#add-todo-add").removeClass("hidden");
     });
 
     $("#add-todo-add").click(function(){
         //append this to the list and reset he span
         //reset the span
         $("#add-todo-form").animate({height: '76px'});
+        list = '';
+        if ($("#text-"+(id-1)).val()!='')
+        {
+            checklistData.push($("#text-"+(id-1)).val())
+        }
+        for (i=0;i<checklistData.length;i++)
+        {
+            temp = "<span class='todo-span' style='display: block;'><input type='checkbox'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+checklistData[i]+"</span>"
+            list = list + temp;
+        }
+        add_data = "<div class='col-lg-10 col-md-10 col-sm-12 col-xs-12 well' style='float:left; margin-left: 8.2%;'><h4>"+$("#todo-title").val()+"</h4>"+list+"</div>";
         $("#todo-fields").empty();
-        add_data = "<div class='col-lg-10 col-md-10 col-sm-12 col-xs-12 well' style='margin-left: 8.2%;'></div>";
-        $("#main-container").append(add_data)
+        $("#main-container").append(add_data);
+        checklistData.length = 0;
+        id = 0;
+        $("#add-todo-add").addClass("hidden");
+        $("#todo-title").val("");
+
+    });
+
+    $(document).on('click','.todo-span',function(){
+
+        if ($(this).find('input').is(':checked')){
+            $(this).css("text-decoration","line-through");
+            parent = $(this).parent(".well");
+            item = $(this).detach();
+            parent.append(item);
+        }
+        else
+        {
+            $(this).css("text-decoration","none");
+        }
     });
 </script>
 </body>
